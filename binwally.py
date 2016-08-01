@@ -15,7 +15,7 @@
 #  - Options for improved outputs (i.e. interactive HTML reports, Venn-Diagrams, <fancy goes here>)
 
 import ssdeep
-import os, sys
+import os, sys, argparse
 
 blocksize = 1024 * 1024
 
@@ -124,30 +124,25 @@ def comparetrees(dir1, dir2, diffs):
         print('    - ignored ' + name + ' (symlink)')
 
 
-def getargs():
-    "Command-line arguments"
-    try:
-        dir1, dir2 = sys.argv[1:]
-    except:
-        print('\
-  \nBinwally: Binary and Directory tree comparison tool\
-  \n          using the Fuzzy Hashing concept (ssdeep)\n\
-  \nBernardo Rodrigues, http://w00tsec.blogspot.com\n\
-  \nUsage: python %s dir1 dir2' % os.path.basename(sys.argv[0]) + '\n')
-        sys.exit(1)
-    else:
-        return (dir1, dir2)
-
-
 if __name__ == '__main__':
-    dir1, dir2 = getargs()
+    parser = argparse.ArgumentParser(prog="Binwally",
+                                     description="Binary and Directory tree comparison tool \
+                                                 using the Fuzzy Hashing concept (ssdeep)",
+                                     epilog="Bernardo Rodrigues, http://w00tsec.blogspot.com ; \
+                                            (2016) Romain DEP.")
+
+    parser.add_argument("left", help="base directory for comparison (ref. as 'left'-side)")
+    parser.add_argument("right", help="directory to be compared against (or 'right'-side)")
+
+    args = parser.parse_args()
+
     diffs = []
     totalscore = 0
 
     # command line arguments are both dirs
-    if os.path.isdir(dir1) & os.path.isdir(dir2):
+    if os.path.isdir(args.left) & os.path.isdir(args.right):
         print('\nSCORE RESULT  PATH')
-        comparetrees(dir1, dir2, diffs)
+        comparetrees(args.left, args.right, diffs)
         if not diffs:
             print('No diffs found\n')
         else:
@@ -158,7 +153,8 @@ if __name__ == '__main__':
     else:
         try:
             # command line arguments are both files
-            score = ssdeep.compare(ssdeep.hash_from_file(dir1), ssdeep.hash_from_file(dir2))
+            score = ssdeep.compare(ssdeep.hash_from_file(args.left),
+                                   ssdeep.hash_from_file(args.right))
             print('Overall match score: ', str(score) + '%\n')
 
         except:
