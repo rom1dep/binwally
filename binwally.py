@@ -1,5 +1,19 @@
 #!/usr/bin/python3
 
+#This script is seemingly unmaintained (no py3 support) but still useful as a tool for directories
+# comparison.
+# This fork is a wip for bringing the codebase to the current quality standards and implement some
+# potentially new and useful features.
+#
+# Ideas include:
+#  - Bootsrapping (installation of the necessary dependencies by the script itself) as a convenience
+#  - Coloring of the output
+#  - Considering file names: binwally performs a bytes comparison of the files with identical names
+# but cannot tell (yet) if a file exists somewhere else with a different name which hinder i.e.
+# spotting of renaming mistakes
+#  - Real CLI interface with options
+#  - Options for improved outputs (i.e. interactive HTML reports, Venn-Diagrams, <fancy goes here>)
+
 import ssdeep
 import os, sys
 
